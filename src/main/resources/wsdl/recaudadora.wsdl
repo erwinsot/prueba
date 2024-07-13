@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="bbvaMaquinaRecaudadora" targetNamespace="http://www.example.org/bbvaMaquinaRecaudadora" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:ns="http://www.example.org/bbvaMaquinaRecaudadora" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/">
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/bbvaMaquinaRecaudadora">
+		
+		
+		<element name="GenerarCargo">
+                <complexType>
+                    <sequence>
+                        <element name="idMaquina" type="xsd:string" minOccurs="1" maxOccurs="1" />
+						<element name="codigoConvenio" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<element name="referencia1" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<element name="referencia2" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="camposAdicionales" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="fechaHoraPago" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<element name="valor_efectivo" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<element name="valor_moneda" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="valorTotal" type="xsd:double" minOccurs="1" maxOccurs="1"/>
+                    </sequence>
+                </complexType>
+        </element>
+			
+			
+			<element name="GenerarCargoResponse">
+                <complexType>
+                    <sequence>
+                        <element name="cod_Respuesta" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="descripcion" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="num_movimiento" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="codigoConvenio" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    </sequence>
+                </complexType>
+            </element>			
+			<element name="CierreDeCaja">
+                <complexType>
+                    <sequence>
+						<element name="Fecha" type="xsd:string" minOccurs="1" maxOccurs="1"></element>
+						<element name="valorTotal" type="xsd:string" minOccurs="1" maxOccurs="1"> </element>
+                    </sequence>
+                </complexType>
+			</element>			
+			<element name="CierreDeCajaResponse">
+                <complexType>
+                    <sequence>
+                        <element name="cod_Respuesta" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="descripcion" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    </sequence>
+                </complexType>
+			</element>			
+			<element name="ValidarFactura">
+                <complexType>
+                    <sequence>
+						<element name="idMaquina" type="xsd:string" minOccurs="1" maxOccurs="1" />
+                        <element name="codigoConvenio" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						<element name="codigoReferencia" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    </sequence>
+                </complexType>
+			</element>			
+				<element name="ValidarFacturaResponse">
+                <complexType>
+                    <sequence>
+                        <element name="cod_Respuesta" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<element name="descripcion" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					</sequence>
+                </complexType>
+            </element>
+		</schema>
+	</types>
+	
+	
+	<message name="GenerarCargoRequest">
+		<part element="ns:GenerarCargo" name="parameters"/>
+	</message>
+	<message name="GenerarCargoResponse">
+		<part element="ns:GenerarCargoResponse" name="parameters"/>
+	</message>
+	<message name="CierreDeCajaRequest">
+		<part element="ns:CierreDeCaja" name="parameters" />
+	</message>
+	<message name="CierreDeCajaResponse">
+		<part element="ns:CierreDeCajaResponse" name="parameters" />
+	</message>
+	<message name="ValidarFacturaRequest">
+		<part element="ns:ValidarFactura" name="parameters" />
+	</message>
+	<message name="ValidarFacturaResponse">
+		<part element="ns:ValidarFacturaResponse" name="parameters" />
+	</message>
+	<portType name="OperacionesRecaudos">
+		<operation name="CierreDeCaja">
+			<documentation>operacion de cierre de caja.</documentation>
+			<input message="ns:CierreDeCajaRequest" />
+			<output message="ns:CierreDeCajaResponse" />
+		</operation>
+		<operation name="ValidarFactura">
+			<documentation>operacion que se encarga de la validacion de la factura, en esta operacion se comprobara si la factura se puede pagar o no por alguna razon.</documentation>
+			<input message="ns:ValidarFacturaRequest" />
+			<output message="ns:ValidarFacturaResponse" />
+		</operation>
+		<operation name="GenerarCargo">
+		  <documentation>Operacion para generar el cargo a la cuenta, en esta operacuion se enviara el identificador unico de la transacion</documentation>
+		  <input message="ns:GenerarCargoRequest"/>
+		  <output message="ns:GenerarCargoResponse"/>
+		</operation>
+	</portType>
+
+	<binding name="MaquinaRecaudadoraSOAPBinding"	type="ns:OperacionesRecaudos">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		
+		<operation name="CierreDeCaja">
+			<soap:operation	soapAction="http://www.example.org/bbvaMaquinaRecaudadora/CierreDeCaja" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		
+		<operation name="ValidarFactura">
+
+			<soap:operation	soapAction="http://www.example.org/bbvaMaquinaRecaudadora/ValidarFactura" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		
+		 <operation name="GenerarCargo">
+		  <soap:operation soapAction="http://www.example.org/bbvaMaquinaRecaudadora/GenerarCargo"/>
+		  <input>
+			<soap:body use="literal"/>
+		  </input>
+		  <output>
+			<soap:body use="literal"/>
+		  </output>
+		</operation>
+	</binding>
+	
+		<service name="bbvaMaquinaRecaudadora">
+			<port binding="ns:MaquinaRecaudadoraSOAPBinding" name="OperacionesRecaudos">
+				<soap:address location="http://www.example.org/" />
+			</port>
+		</service> 
+</definitions>

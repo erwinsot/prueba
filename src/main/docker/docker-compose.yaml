@@ -1,0 +1,70 @@
+services:
+  dynamic-route-mongo:
+    image: erwinsot/dymamic-route-mongo
+    environment:
+      QUARKUS_MONGO_CONNECTION: "mongodb://host.docker.internal:27017"
+      QUARKUS_HTTP_PORT: 12502
+      SET_HOST_CONSUL: "host.docker.internal"
+      SET_HOST_ADRESS_REGISTER: "host.docker.internal"
+      SET_PORT_CONSUL: "8500"
+      LOCAL_HOST: "host.docker.internal"
+      LOCAL_PORT: "12504"
+      SET_PORT_ADRESS_REGISTER: "12505"
+    ports:
+      - "12502:12502"
+    depends_on:
+      - soap-services-mongo
+
+  soap-services-mongo:
+    image: erwinsot/soap-services-v2
+    environment:
+       QUARKUS_HTTP_PORT: 12505
+    ports:
+      - "12505:12505"
+
+  balancer-mongo:
+    image: erwinsot/balancer-mongo
+    environment:
+      QUARKUS_HTTP_PORT: 12503
+      SET_PORT_CONSUl: "8500"
+      SET_HOST_CONSUL: "host.docker.internal"
+      SET_HOST_LOCAL_HANDLER: "localendpoint-mongo"
+    ports:
+      - "12503:12503"
+
+  localendpoint-mongo:
+    image: erwinsot/localendpoint-mongo
+    environment:
+      QUARKUS_MONGO_CONECTION: "mongodb://host.docker.internal:27017"
+      QUARKUS_HTTP_PORT: 12504
+      BALANCER_HOST: "host.docker.internal"
+      BALANCER_PORT: "12503"
+      SET_DYNAMIC_ROUTE_HOST: "host.docker.internal"
+      SET_DYNAMIC_ROUTE_PORT: "12502"
+    ports:
+      - "12504:12504"
+      - "18000:18000"
+      - "8000-8100:8000-8100/tcp"
+    depends_on:
+      - balancer-mongo
+
+  frontbbva-mongo:
+    image: erwinsot/frontbbva-mongo
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_FRONT_DYNAMIC: "http://localhost:12502"
+        VITE_FRONT_LOCAL: "http://localhost:12504"
+        LOCAL_PORT: 14000
+    ports:
+      - "14000:14000"
+    environment:
+      - VITE_FRONT_DYNAMIC=http://localhost:12502
+      - VITE_FRONT_ORQUEST=http://localhost:12504
+      - LOCAL_PORT=14000
+
+
+
+
+
